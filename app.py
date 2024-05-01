@@ -171,6 +171,47 @@ def login():
     # If request method is GET, render the login page
     return render_template('login.html')
 
+@app.route('/logout')
+def logout():
+    """
+    Clear the User session
+    """
+    session.pop('user_id', None)
+
+    # Redirect to the home page
+    return redirect(url_for('index'))
+
+# Get Profile Information
+@app.route('/profile', methods=['GET'])
+@login_required
+def profile():
+    """
+    Profile Inifo
+    """
+    user_id = session['user_id']
+    user = User.query.get_or_404(user_id)
+    return render_template('profile.html', user=user)
+
+# Update Password
+@app.route('/update_password', methods=['POST'])
+@login_required
+def update_password():
+    """
+    Update current user password
+    """
+    user_id = session['user_id']
+    user = User.query.get_or_404(user_id)  # Assuming you have a User model
+    # Get the new password from the form
+    new_password = request.form.get('new_password')
+    print(new_password)
+    # Update the user's password
+    user.set_password(new_password)
+    # Commit the changes to the database
+    db.session.commit()
+    flash('Password updated successfully!', 'success')
+    # Redirect back to the profile page
+    return redirect(url_for('profile'))
+
 @app.route('/admin/dashboard')
 def dashboard():
     """
@@ -285,6 +326,14 @@ def list_hotels():
     return render_template('list_hotels.html', hotels=hotels)
 
 
+@app.route('/hotel/<int:hotel_id>/booking', methods=['GET', 'POST'])
+def go_to_hotel(hotel_id):
+    hotel = Hotel.query.get_or_404(hotel_id)
+    rooms = Room.query.filter_by(hotel_id=hotel_id).all()
+    current_date = datetime.now().date()
+    return render_template('room_booking.html', hotel=hotel, rooms=rooms, current_date=current_date)
+
+
 @app.route('/bookings', methods=['GET'])
 @login_required
 def list_bookings():
@@ -341,7 +390,7 @@ def list_user_bookings():
             # Create a dictionary containing booking details and hotel information
             booking_info = {
                 "booking_id": booking.id,
-                "room_id": booking.room_id,
+                "room": room.type,
                 "hotel_city": hotel.city if hotel else None,  # Get hotel city if hotel exists
                 # Add more hotel information as needed
                 "check_in_date": booking.check_in_date,

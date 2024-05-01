@@ -1,23 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
-        <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>{% block title %}{% endblock %}</title>
-                <!-- Include Tailwind CSS -->
-                <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-        </head>
-        <body class="bg-gray-100">
-                <!-- Navbar -->
-                <nav class="flex justify-between bg-gray-800 p-6">
-                        <div class="container mx-auto flex justify-between items-center">
-				<a href="{{url_for('index')}}" class="text-white text-2xl font-bold">World Hotels</a>
-                                <!-- Add your navigation links here -->
-                        </div>
-			<ul class="flex gap-3 list-type-none">
-				<li><a href="{{url_for('list_user_bookings')}}" class="text-white text-lg">My Bookings</a></li>
+		<!-- Include Tailwind CSS -->
+		<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+	</head>
+	<body class="bg-gray-100">
+		<!-- Navbar -->
+		<nav class="flex justify-between bg-gray-800 p-6">
+			<a href="{{url_for('index')}}" class="text-white text-2xl font-bold">World Hotels</a>
+			<ul class="flex flex gap-3 list-none items-center">
+				{% if 'user_id' in session %}
+				<li><a href="{{ url_for('list_user_bookings') }}" class="text-white text-lg">My Bookings</a></li>
+				<li><a href="{{ url_for('profile') }}" class="text-white text-lg">Profile</a></li>
+				<li><a href="{{ url_for('logout') }}" class="text-white text-lg">Logout</a></li>
+				{% else %}
+				<li><a href="{{ url_for('login') }}" class="text-white text-lg">Sign In</a></li>
+				<li><a href="{{ url_for('register') }}" class="text-white text-lg">Sign Up</a></li>
+				{% endif %}
 			</ul>
-                </nav>
+		</nav>
+		{% with messages = get_flashed_messages() %}
+		{% if messages %}
+		<ul>
+			{% for message in messages %}
+			<li class="my-4 bg-green-300 text-green-700 border-green-700 px-4 py-2">{{ message }}</li>
+			{% endfor %}
+		</ul>
+		{% endif %}
+		{% endwith %}
+
 		{% block content %}
 		{% endblock %}
 	</body>
