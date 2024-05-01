@@ -44,7 +44,7 @@ class Hotel(db.Model):
 class Room(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     type = db.Column(db.String(50), nullable=False)
-    hotel_id = db.Column(db.Integer, db.ForeignKey('hotel.id'), nullable=False)
+    hotel_id = db.Column(db.Integer, db.ForeignKey('hotel.id'), nullable=True)
     bookings = db.relationship('Booking', backref='room', lazy=True)
 
     def __repr__(self):
