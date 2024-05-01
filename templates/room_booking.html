@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}
+Room Booking
+{% endblock %}
+
+{% block content %}
+<!-- Hotel Info Section -->
+<section class="py-8 px-4 flex">
+	<!-- Left Section: Hotel Info -->
+	<div class="w-1/2">
+		<!-- City Image -->
+		{% set relative_path = hotel.city_image_url.split('static/') | last %}
+		<img src="{{ url_for('static', filename=relative_path) }}" alt="{{ hotel.city }}" style="height: 400px; width: 100%; object-fit: cover;" />
+		<!-- Hotel Details -->
+		<h2 class="text-2xl font-semibold">{{ hotel.city }}</h2>
+		<p class="text-gray-600">Capacity: {{ hotel.capacity }}</p>
+	</div>
+
+	<!-- Right Section: Room Types -->
+	<div class="w-1/2 px-4">
+		<h2 class="text-2xl font-semibold mb-4">Select your Room to Book</h2>
+		<h6 class="my-3 text-xl text-gray-600">Book your room 45 to 90 days earlier and enjoy big discounts!</h6>
+		<div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+			<!-- Loop through Room Types -->
+			{% for room in hotel.rooms %}
+			<div class="col-span-1 bg-white rounded-lg shadow-lg p-4 mb-4">
+				<!-- Room Type and Price -->
+				<h3 class="text-xl font-semibold capitalize">{{ room.type }} Room</h3>
+				{% set today = current_date.strftime('%Y-%m-%d') %}
+				{% set is_peak_season = today >= '2022-04-01' and today <= '2022-08-31' or today >= '2022-11-01' and today <= '2022-12-31' %}
+				    {% if room.type == 'standard' %}
+				    {% set rate = hotel.peak_season_rate if is_peak_season else hotel.off_peak_rate %}
+				    {% elif room.type == 'double' %}
+				    {% set rate = (hotel.peak_season_rate if is_peak_season else hotel.off_peak_rate) * 1.2 %}
+				    {% elif room.type == 'family' %}
+				    {% set rate = (hotel.peak_season_rate if is_peak_season else hotel.off_peak_rate) * 1.5 %}
+				    {% endif %}
+				    <p class="bg-blue-100 w-max my-2 text-blue-500 px-2 py-1">Price: {{ rate }}</p>
+				    <!-- Book Button -->
+				    <form action="/book_room/{{ room.id }}" method="post">
+					    <div class="flex flex-col gap-1 mb-3">
+						    <label for="start_date">Start Date</label>
+						    <input type="date" id="start_date" class="w-full py-2 px-4 border rounded focus:outline-gray-900" />
+					    </div>
+					    <div class="flex flex-col gap-1 mb-3">
+						    <label for="end_date">End Date</label>
+						    <input type="date" id="end_date" class="w-full py-2 px-4 border rounded focus:outline-gray-900" />
+					    </div>
+					    <button type="submit" class="bg-blue-500 text-white py-2 px-4 mt-2 rounded hover:bg-blue-600">
+						    Book Now
+					    </button>
+				    </form>
+			</div>
+			{% endfor %}
+		</div>
+	</div>
+</section>
+{% endblock %}

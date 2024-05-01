@@ -1,23 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <header>
-        <div class="logo">Hotel Name</div>
-    </header>
-    <section class="login-form">
-        <h2>Login</h2>
-        <form action="login.py" method="post">
-            <input type="email" name="email" placeholder="Email" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <button type="submit">Login</button>
-        </form>
-    </section>
-</body>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>World Hotels | Sign In</title>
+		<!-- Include Tailwind CSS -->
+		<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+	</head>
+	<body class="flex items-center justify-center h-screen bg-gray-900">
+		<div class="bg-white shadow-md rounded px-8 py-8 max-w-md">
+			<h2 class="text-2xl font-bold mb-4 text-center">Welcome Back To World Hotels</h2>
+			{% if error %}
+			<p class="bg-red-100 border-red-400 text-red-700 rounded p-2 w-full">{{ error }}</p>
+			{% endif %}
+			<form action="/login" method="post">
+				<div class="mb-4">
+					<label for="username" class="block text-gray-700 font-bold mb-2">Username</label>
+					<input type="text" id="username" name="username" class="w-full rounded px-4 py-2 border border-gray-300" required>
+				</div>
+				<div class="mb-6">
+					<label for="password" class="block text-gray-700 font-bold mb-2">Password</label>
+					<input type="password" id="password" name="password" class="w-full border rounded border-gray-300 px-4 py-2" required>
+				</div>
+				<div class="flex flex-col items-center justify-between">
+					<button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+						Sign In
+					</button>
+					<span class="flex gap-2 text-sm py-2">
+						<p class="text-gray-600">Don't have an account?</p>
+						<a href="{{url_for('register')}}" class="text-blue-500 underline">Sign In</a>
+					</span>
+				</div>
+			</form>
+		</div>
+	</body>
 </html>
 

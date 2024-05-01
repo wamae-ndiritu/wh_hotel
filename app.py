@@ -1,9 +1,11 @@
 """
 App Views
 """
-from flask import Flask, render_template, request, redirect, url_for, flash
+from functools import wraps
+from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
+from datetime import datetime
 import os
 
 from config.db import db
@@ -20,6 +22,24 @@ db.init_app(app)
 
 from models.index import User, Hotel, Room, Booking, Price, Currency, ExchangeRate, Constraint
 
+
+def login_required(func):
+    """
+    Login required decorator
+    """
+    @wraps(func)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            # User is not logged in, redirect to login page
+            return redirect(url_for('login'))
+        return func(*args, **kwargs)
+    return decorated_function
+
+@app.route('/book_room/<int:room_id>', methods=['POST'])
+@login_required
+def book_hotel_room(room_id):
+    # Booking logic here
+    pass
 
 @app.route('/')
 def index():
@@ -51,6 +71,28 @@ def register():
 
     return render_template('register.html')
 
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    """
+    Login user - Session authentication
+    """
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        # Check if the user exists in the database and if the password is correct
+        user = User.query.filter_by(username=username).first()
+        if user and user.check_password(password):
+            # If credentials are correct, set session variable and redirect to home page
+            session['user_id'] = user.id
+            return redirect(url_for('home'))
+        else:
+            # If credentials are incorrect, render the login page with an error message
+            return render_template('login.html', error='Invalid username or password')
+
+    # If request method is GET, render the login page
+    return render_template('login.html')
 
 @app.route('/admin/dashboard')
 def dashboard():
@@ -165,11 +207,21 @@ def list_hotels():
     hotels = Hotel.query.all()
     return render_template('list_hotels.html', hotels=hotels)
 
+@app.route('/hotel/<int:hotel_id>/booking', methods=['GET', 'POST'])
+def book_room(hotel_id):
+    hotel = Hotel.query.get_or_404(hotel_id)
+    rooms = Room.query.filter_by(hotel_id=hotel_id).all()
+    current_date = datetime.now().date()
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    # Your login logic here
-    return render_template('login.html')
+    if request.method == 'POST':
+        # Logic to book the room goes here
+        # For example, you might add the booked room to a database table
+
+        flash('Room booked successfully!', 'success')
+        return redirect(url_for('index'))
+    else:
+        return render_template('room_booking.html', hotel=hotel, rooms=rooms, current_date=current_date)
+
 
 @app.route('/rooms')
 def rooms():
