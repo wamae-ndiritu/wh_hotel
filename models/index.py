@@ -56,6 +56,7 @@ class Booking(db.Model):
     room_id = db.Column(db.Integer, db.ForeignKey('room.id'), nullable=False)
     check_in_date = db.Column(db.Date, nullable=False)
     check_out_date = db.Column(db.Date, nullable=False)
+    amount = db.Column(db.Float, nullable=False, default=0.0)
 
     def __repr__(self):
         return '<Booking %r>' % self.id

@@ -1,0 +1,37 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Bookings{% endblock %}
+
+{% block content %}
+<section class="bg-white overflow-x-auto px-4">
+	<h1 class="text-2xl font-semibold my-3 text-gray-900">Bookings</h1>
+	<table class="w-max lg:w-full border border-gray-300 mb-5">
+		<thead>
+			<tr>
+				<th class="border border-gray-300 p-2">Booking ID</th>
+				<th class="border border-gray-300 p-2">User</th>
+				<th class="border border-gray-300 p-2">City</th>
+				<th class="border border-gray-300 p-2">Room</th>
+				<th class="border border-gray-300 p-2">Start Date</th>
+				<th class="border border-gray-300 p-2">End Date</th>
+				<th class="border border-gray-300 p-2">Days</th>
+				<th class="border border-gray-300 p-2">Totals</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for booking in bookings %}
+			<tr>
+				<td class="border border-gray-300 px-2">{{ booking.booking_id }}</td>
+				<td class="border border-gray-300 px-2">{{ booking.email }}</td>
+				<td class="border border-gray-300 px-2">{{ booking.city }}</td>
+				<td class="border border-gray-300 px-2">{{ booking.room }}</td>
+				<td class="border border-gray-300 px-2">{{ booking.check_in_date }}</td>
+				<td class="border border-gray-300 px-2">{{ booking.check_out_date }}</td>
+				<td class="border border-gray-300 px-2">{{ booking.days }}</td>
+				<td class="border border-gray-300 px-2">{{ booking.amount }}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</section>
+{% endblock %}

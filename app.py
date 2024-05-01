@@ -35,11 +35,79 @@ def login_required(func):
         return func(*args, **kwargs)
     return decorated_function
 
+
+from datetime import datetime, timedelta
+
 @app.route('/book_room/<int:room_id>', methods=['POST'])
 @login_required
 def book_hotel_room(room_id):
-    # Booking logic here
-    pass
+    """
+    Book Hotel Room
+    """
+    if request.method == 'POST':
+        # Retrieve the logged-in user
+        user = session['user_id']
+
+        # Retrieve the selected room
+        room = Room.query.get_or_404(room_id)
+        hotel = Hotel.query.get_or_404(room.hotel_id)
+        # Retrieve form data
+        check_in_date = request.form['check_in_date']
+        check_out_date = request.form['check_out_date']
+
+        # Convert date strings to datetime objects
+        check_in_date = datetime.strptime(check_in_date, '%Y-%m-%d').date()
+        check_out_date = datetime.strptime(check_out_date, '%Y-%m-%d').date()
+
+        # Calculate the number of nights
+        num_nights = (check_out_date - check_in_date).days
+
+        # Determine the rate based on peak or off-peak season
+        if check_in_date.month in [4, 5, 6, 7, 8, 11, 12]:
+            rate = hotel.peak_season_rate
+        else:
+            rate = hotel.off_peak_rate
+
+        # Calculate the booking amount
+        amount = num_nights * rate
+
+        # Calculate the check-in date
+        today = datetime.now().date()
+        days_until_check_in = (check_in_date - today).days
+
+        # Apply advanced booking discount
+        if 80 <= days_until_check_in <= 90:
+            discount = 0.3  # 30% discount
+        elif 60 <= days_until_check_in <= 79:
+            discount = 0.2  # 20% discount
+        elif 45 <= days_until_check_in <= 59:
+            discount = 0.1  # 10% discount
+        else:
+            discount = 0  # No discount
+
+        # Apply discount to the booking amount
+        discounted_amount = amount - (amount * discount)
+
+        # Create a new booking instance
+        new_booking = Booking(
+            user_id=user,
+            room_id=room.id,
+            check_in_date=check_in_date,
+            check_out_date=check_out_date,
+            amount=discounted_amount
+        )
+
+        # Add the new booking to the database
+        db.session.add(new_booking)
+        db.session.commit()
+
+        # Redirect to a success page or display a success message
+        flash('Booking successful!', 'success')
+        return redirect(url_for('index'))
+
+    # Handle GET requests by rendering a form
+    return redirect(url_for('index'))
+
 
 @app.route('/')
 def index():
@@ -216,21 +284,76 @@ def list_hotels():
     hotels = Hotel.query.all()
     return render_template('list_hotels.html', hotels=hotels)
 
-@app.route('/hotel/<int:hotel_id>/booking', methods=['GET', 'POST'])
-def book_room(hotel_id):
-    hotel = Hotel.query.get_or_404(hotel_id)
-    rooms = Room.query.filter_by(hotel_id=hotel_id).all()
-    current_date = datetime.now().date()
 
-    if request.method == 'POST':
-        # Logic to book the room goes here
-        # For example, you might add the booked room to a database table
+@app.route('/bookings', methods=['GET'])
+@login_required
+def list_bookings():
+    bookings = Booking.query.all()
+    bookings_info = []
 
-        flash('Room booked successfully!', 'success')
-        return redirect(url_for('index'))
-    else:
-        return render_template('room_booking.html', hotel=hotel, rooms=rooms, current_date=current_date)
+    for booking in bookings:
+        # Query the User table to get the user information
+        user = User.query.get_or_404(booking.user_id)
+        room = Room.query.get_or_404(booking.room_id)
+        hotel = Hotel.query.get_or_404(room.hotel_id)
+        num_days = (booking.check_out_date - booking.check_in_date).days
+        
+        # Create a dictionary containing booking details and user information
+        booking_details = {
+            "booking_id": booking.id,
+            "user_id": booking.user_id,
+            "email": user.email,
+            "room": room.type,
+            "city": hotel.city,
+            "check_in_date": booking.check_in_date,
+            "check_out_date": booking.check_out_date,
+            "amount": booking.amount,
+            "days": num_days
+        }
 
+        # Append the dictionary to the list
+        bookings_info.append(booking_details)
+
+    return render_template('admin_bookings.html', bookings=bookings_info)
+
+
+@app.route('/user/bookings', methods=['GET'])
+@login_required
+def list_user_bookings():
+    """
+    List current user bookings
+    """
+    user_id = session['user_id']
+    user_bookings = Booking.query.filter_by(user_id=user_id).all()
+    user_bookings_with_hotel_info = []
+
+    for booking in user_bookings:
+        # Calculate the number of days for the booking
+        num_days = (booking.check_out_date - booking.check_in_date).days
+
+        # Query the Room table to get the room information
+        room = Room.query.get_or_404(booking.room_id)
+
+        if room:
+            # Query the Hotel table to get the hotel information
+            hotel = Hotel.query.get_or_404(room.hotel_id)
+
+            # Create a dictionary containing booking details and hotel information
+            booking_info = {
+                "booking_id": booking.id,
+                "room_id": booking.room_id,
+                "hotel_city": hotel.city if hotel else None,  # Get hotel city if hotel exists
+                # Add more hotel information as needed
+                "check_in_date": booking.check_in_date,
+                "check_out_date": booking.check_out_date,
+                "num_days": num_days,
+                "amount": booking.amount
+            }
+
+            # Append the dictionary to the list
+            user_bookings_with_hotel_info.append(booking_info)
+
+    return render_template('user_bookings.html', bookings=user_bookings_with_hotel_info)
 
 @app.route('/rooms')
 def rooms():
