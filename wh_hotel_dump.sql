@@ -19,6 +19,16 @@
 -- Table structure for table `booking`
 --
 
+-- prepares a MySQL server for the project
+
+CREATE DATABASE IF NOT EXISTS wh_hotel;
+CREATE USER IF NOT EXISTS 'wh_hotel_dev'@'localhost' IDENTIFIED BY '12345678';
+GRANT ALL PRIVILEGES ON `wh_hotel`.* TO 'wh_hotel_dev'@'localhost';
+GRANT SELECT ON `performance_schema`.* TO 'wh_hotel_dev'@'localhost';
+FLUSH PRIVILEGES;
+
+USE wh_hotel;
+
 DROP TABLE IF EXISTS `booking`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
@@ -221,10 +231,11 @@ CREATE TABLE `user` (
   `username` varchar(80) NOT NULL,
   `email` varchar(120) NOT NULL,
   `password` varchar(255) NOT NULL,
+  `is_admin` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -233,7 +244,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'wamae','wamaejoseph392@gmail.com','12345678'),(2,'ndirituwamae','ndirituwamae@students.uonbi.ac.ke','scrypt:32768:8:1$GeczaJLrCGqSEuy5$0bb055af3bde1e5af8a5b07d03b82f23def7694bd390b94ec27119f32082d9c675b6f9d8b133eac50e779e5eee10e5967f06857a080a17b08f3e782469f1e724');
+INSERT INTO `user` VALUES (1,'wamae','wamaejoseph392@gmail.com','12345678',0),(2,'ndirituwamae','ndirituwamae@students.uonbi.ac.ke','scrypt:32768:8:1$Le2aq9CH1KQXybdx$d7744df353a2c24b0a3da55acab2fb025a30ae5f09726207fc0105138da75b333bec524124f62edd1e517574d728b68ffa6ee9049a071d3685f47cebb99241a4',0),(3,'admin','admin@gmail.com','scrypt:32768:8:1$UsGvUcc1DrFN8AXP$f358f3faceab583774a51e9d21f1d20a6cd6b02297d223af3ebc43cc1022b92792795b03f7f114d0b52c83a9e497fc317972f38b227c2b734cd24236f1dcda29',1);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -246,4 +257,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-01 15:27:09
+-- Dump completed on 2024-05-01 16:57:19
