@@ -1,34 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Hotel</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-</head>
-<body>
-    <h1>Add Hotel</h1>
-    <form action="{{ url_for('add_hotel') }}" method="POST" enctype="multipart/form-data">
-        <label for="name">Hotel Name:</label>
-        <input type="text" id="name" name="name" required><br><br>
-        
-        <label for="city">City:</label>
-        <input type="text" id="city" name="city" required><br><br>
-        
-        <label for="capacity">Capacity:</label>
-        <input type="number" id="capacity" name="capacity" required><br><br>
-        
-        <label for="peak_season_rate">Peak Season Rate:</label>
-        <input type="number" id="peak_season_rate" name="peak_season_rate" required><br><br>
-        
-        <label for="off_peak_rate">Off-Peak Rate:</label>
-        <input type="number" id="off_peak_rate" name="off_peak_rate" required><br><br>
-        
-        <label for="image">City Image:</label>
-        <input type="file" id="image" name="image"><br><br>
-        
-        <button type="submit">Add Hotel</button>
-    </form>
-</body>
-</html>
+{% extends 'admin_base.html' %}
 
+{% block title %}Add Hotel{% endblock %}
+
+{% block content %}    
+<h1 class="text-3xl my-4 font-semibold">Add Hotel</h1>
+<form action="{{ url_for('add_hotel') }}" method="POST" enctype="multipart/form-data" class="bg-white p-4 shadow">
+	<div class="flex flex-col gap-1 mb-3">
+		<label for="city">City</label>
+		<input type="text" id="city" name="city" class="px-4 py-2 border border-gray-300 focus:outline-none" required>
+	</div>
+	<div class="flex flex-col gap-1 mb-3">
+		<label for="capacity">Capacity</label>
+		<input type="number" id="capacity" name="capacity" class="px-4 py-2 border border-gray-300 focus:outline-none" required>
+	</div>
+	<div class="flex flex-col gap-1 mb-3">
+		<label for="peak_season_rate">Peak Season Rate</label>
+		<input type="number" id="peak_season_rate" name="peak_season_rate" class="px-4 py-2 border border-gray-300 focus:outline-none" required>
+	</div>
+	<div class="flex flex-col gap-1 mb-3">
+		<label for="off_peak_rate">Off-Peak Rate</label>
+        	<input type="number" id="off_peak_rate" name="off_peak_rate" class="px-4 py-2 border border-gray-300 focus:outline-none" required>
+	</div>
+	<div class="flex flex-col gap-1 mb-3">
+		<label for="image">City Image</label>
+        	<input type="file" id="image" name="image">
+	</div>
+	<button type="submit" class="my-2 bg-blue-500 text-white px-4 py-1">Add Hotel</button>
+</form>
+{% endblock %}

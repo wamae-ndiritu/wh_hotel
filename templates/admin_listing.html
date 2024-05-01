@@ -4,7 +4,10 @@
 
 {% block content %}
 <section class="bg-white overflow-x-auto px-4">
-	<h1 class="text-2xl font-semibold my-3 text-gray-900">Hotel Listing</h1>
+	<div class="w-full flex items-center justify-between">
+		<h1 class="text-2xl font-semibold my-3 text-gray-900">Hotel Listing</h1>
+        	<a href="{{url_for('add_hotel')}}" class="text-blue-500 underline ml-4">New Hotel</a>
+	</div>
 	<table class="w-max lg:w-full border border-gray-300 mb-5">
 		<thead>
 			<tr>
