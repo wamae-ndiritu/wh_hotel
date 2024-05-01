@@ -20,6 +20,9 @@
 				<li><a href="{{ url_for('login') }}" class="text-white text-lg">Sign In</a></li>
 				<li><a href="{{ url_for('register') }}" class="text-white text-lg">Sign Up</a></li>
 				{% endif %}
+				{% if session['is_admin'] %}
+                                <li><a href="{{ url_for('dashboard') }}" class="text-white text-lg">Admin Dashboard</a></li>
+                                {% endif %}
 			</ul>
 		</nav>
 		{% with messages = get_flashed_messages() %}

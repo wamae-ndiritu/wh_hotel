@@ -35,6 +35,21 @@ def login_required(func):
         return func(*args, **kwargs)
     return decorated_function
 
+def admin_required(func):
+    """
+    Admin required decorator
+    """
+    @wraps(func)
+    def decorated_function(*args, **kwargs):
+        # Check if the user is logged in and is an admin
+        if 'user_id' in session and session['is_admin']:
+            return func(*args, **kwargs)
+        else:
+            # If user is not logged in or is not an admin, redirect to login page
+            flash('Please login as an admin!', 'error')
+            return redirect(url_for('index'))
+    return decorated_function
+
 
 from datetime import datetime, timedelta
 
@@ -163,6 +178,7 @@ def login():
         if user and user.check_password(password):
             # If credentials are correct, set session variable and redirect to home page
             session['user_id'] = user.id
+            session['is_admin'] = user.is_admin
             return redirect(url_for('index'))
         else:
             # If credentials are incorrect, render the login page with an error message
@@ -213,6 +229,7 @@ def update_password():
     return redirect(url_for('profile'))
 
 @app.route('/admin/dashboard')
+@admin_required
 def dashboard():
     """
     Admin Dashboard
@@ -228,6 +245,7 @@ def dashboard():
 
 
 @app.route('/admin/add_hotel', methods=['GET', 'POST'])
+@admin_required
 def add_hotel():
     """
     Create Hotel
@@ -261,6 +279,7 @@ def add_hotel():
 
 
 @app.route('/admin/hotels_listing')
+@admin_required
 def admin_hotels():
     """
     Admin list all hotels
@@ -270,6 +289,7 @@ def admin_hotels():
 
 # View a single hotel
 @app.route('/admin/hotel/<int:hotel_id>')
+@admin_required
 def view_hotel(hotel_id):
     hotel = Hotel.query.get_or_404(hotel_id)
     rooms = Room.query.filter_by(hotel_id=hotel_id).all()
@@ -277,6 +297,7 @@ def view_hotel(hotel_id):
 
 # Edit a hotel
 @app.route('/admin/hotel/<int:hotel_id>/edit', methods=['GET', 'POST'])
+@admin_required
 def edit_hotel(hotel_id):
     hotel = Hotel.query.get_or_404(hotel_id)
     if request.method == 'POST':
@@ -293,6 +314,7 @@ def edit_hotel(hotel_id):
 
 # Delete a hotel
 @app.route('/admin/hotel/<int:hotel_id>/delete')
+@admin_required
 def delete_hotel(hotel_id):
     hotel = Hotel.query.get_or_404(hotel_id)
     db.session.delete(hotel)
@@ -302,6 +324,7 @@ def delete_hotel(hotel_id):
 
 
 @app.route('/admin/add_room/<int:hotel_id>', methods=['GET', 'POST'])
+@admin_required
 def add_room(hotel_id):
     """
     Create Hotel Room
@@ -335,7 +358,7 @@ def go_to_hotel(hotel_id):
 
 
 @app.route('/bookings', methods=['GET'])
-@login_required
+@admin_required
 def list_bookings():
     bookings = Booking.query.all()
     bookings_info = []
@@ -404,15 +427,6 @@ def list_user_bookings():
 
     return render_template('user_bookings.html', bookings=user_bookings_with_hotel_info)
 
-@app.route('/rooms')
-def rooms():
-    # Your rooms logic here
-    return render_template('rooms.html')
-
-@app.route('/payment', methods=['GET', 'POST'])
-def payment():
-    # Your payment logic here
-    return render_template('payment.html')
 
 if __name__ == '__main__':
     with app.app_context():
