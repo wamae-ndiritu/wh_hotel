@@ -53,6 +53,7 @@ def index():
     return render_template('index.html', hotels=hotels)
 
 
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -60,14 +61,22 @@ def register():
         email = request.form['email']
         password = request.form['password']
 
-        # Create a new user instance
-        new_user = User(username=username, email=email, password=password)
+        # Check if username or email already exists
+        existing_user = User.query.filter((User.username == username) | (User.email == email)).first()
+        if existing_user:
+            flash('Username or email already exists. Please choose another.', 'error')
+            return redirect(url_for('register'))
+
+        # Create a new user instance with hashed password
+        new_user = User(username=username, email=email)
+        new_user.set_password(password)
 
         # Add new user to the database
         db.session.add(new_user)
         db.session.commit()
 
-        return redirect(url_for('index'))
+        flash('Registration successful. You can now log in.', 'success')
+        return redirect(url_for('login'))
 
     return render_template('register.html')
 
@@ -86,7 +95,7 @@ def login():
         if user and user.check_password(password):
             # If credentials are correct, set session variable and redirect to home page
             session['user_id'] = user.id
-            return redirect(url_for('home'))
+            return redirect(url_for('index'))
         else:
             # If credentials are incorrect, render the login page with an error message
             return render_template('login.html', error='Invalid username or password')

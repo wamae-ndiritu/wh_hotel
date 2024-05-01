@@ -10,18 +10,26 @@
 	<body class="flex items-center justify-center h-screen bg-gray-900">
 		<div class="bg-white shadow-md rounded px-8 py-8 max-w-md">
 			<h2 class="text-2xl font-bold mb-4 text-center">Welcome To World Hotels</h2>
-			{% if error %}
-			<p class="bg-red-100 border-red-400 text-red-700 rounded p-2 w-full">{{ error }}</p>
-			{% endif %}
+			<div class="container mx-auto">
+				{% with messages = get_flashed_messages() %}
+				{% if messages %}
+				<ul>
+					{% for message in messages %}
+					<li>{{ message }}</li>
+					{% endfor %}
+				</ul>
+				{% endif %}
+				{% endwith %}
+			</div>
 			<form action="/register" method="post">
 				<div class="mb-4">
 					<label for="username" class="block text-gray-700 font-bold mb-2">Username</label>
 					<input type="text" id="username" name="username" class="w-full rounded px-4 py-2 border border-gray-300" required>
 				</div>
 				<div class="mb-4">
-                                        <label for="email" class="block text-gray-700 font-bold mb-2">Email</label>
-                                        <input type="email" id="username" name="username" class="w-full rounded px-4 py-2 border border-gray-300" required>
-                                </div>
+					<label for="email" class="block text-gray-700 font-bold mb-2">Email</label>
+					<input type="email" id="username" name="email" class="w-full rounded px-4 py-2 border border-gray-300" required>
+				</div>
 
 				<div class="mb-6">
 					<label for="password" class="block text-gray-700 font-bold mb-2">Password</label>
