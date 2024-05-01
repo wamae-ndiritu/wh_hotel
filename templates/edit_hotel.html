@@ -1,0 +1,34 @@
+{% extends 'admin_base.html' %}
+
+{% block title %}Edit Hotel{% endblock %}
+
+{% block content %}
+<div class="bg-white p-6 rounded-lg shadow-lg">
+    <h2 class="text-2xl font-semibold mb-4">Edit Hotel</h2>
+    <form action="{{ url_for('edit_hotel', hotel_id=hotel.id) }}" method="post">
+        <div class="mb-4">
+            <label for="city" class="block text-gray-700 font-semibold mb-2">City</label>
+            <input type="text" id="city" name="city" value="{{ hotel.city }}" class="w-full border rounded py-2 px-3 focus:outline-none focus:border-blue-500">
+        </div>
+        <div class="mb-4">
+            <label for="city_image_url" class="block text-gray-700 font-semibold mb-2">City Image URL</label>
+            <input type="text" id="city_image_url" name="city_image_url" value="{{ hotel.city_image_url }}" class="w-full border rounded py-2 px-3 focus:outline-none focus:border-blue-500">
+        </div>
+        <div class="mb-4">
+            <label for="capacity" class="block text-gray-700 font-semibold mb-2">Capacity</label>
+            <input type="number" id="capacity" name="capacity" value="{{ hotel.capacity }}" class="w-full border rounded py-2 px-3 focus:outline-none focus:border-blue-500">
+        </div>
+        <div class="mb-4">
+            <label for="peak_season_rate" class="block text-gray-700 font-semibold mb-2">Peak Season Rate</label>
+            <input type="number" id="peak_season_rate" name="peak_season_rate" value="{{ hotel.peak_season_rate }}" class="w-full border rounded py-2 px-3 focus:outline-none focus:border-blue-500">
+        </div>
+        <div class="mb-4">
+            <label for="off_peak_rate" class="block text-gray-700 font-semibold mb-2">Off-Peak Rate</label>
+            <input type="number" id="off_peak_rate" name="off_peak_rate" value="{{ hotel.off_peak_rate }}" class="w-full border rounded py-2 px-3 focus:outline-none focus:border-blue-500">
+        </div>
+        <div>
+            <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">Update Hotel</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

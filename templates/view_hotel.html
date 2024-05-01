@@ -1,0 +1,63 @@
+{% extends 'admin_base.html' %}
+
+{% block title %}View Hotel{% endblock %}
+
+{% block content %}
+<div class="w-full flex gap-10 bg-white p-6 shadow">
+	<div class="md:w-1/2">
+		<h2 class="text-xl font-semibold mb-4">Hotel Info</h2>
+		<h3 class="text-xl font-semibold">{{ hotel.city }}</h3>
+		{% set relative_path = hotel.city_image_url.split('static/') | last %}
+		<img src="{{ url_for('static', filename=relative_path) }}" alt="{{ hotel.city }}" style="height: 150px; width: 2100%; object-fit: cover;" />
+		<div class="flex gap-5">
+			<h6>Capacity:</h6>
+			<p class="text-gray-600">{{ hotel.capacity }}</p>
+		</div>
+		<div class="flex gap-5">
+			<h6>Peak Season Rate:</h6>
+			<p>{{ hotel.peak_season_rate }}</p>
+		</div>
+		<div class="flex gap-5">
+			<h6>Off-peak Season Rate:</h6>
+			<p>{{ hotel.off_peak_rate }}</p>
+		</div>
+		<div class="my-3 mx-auto">
+			<h2 class="text-lg mb-3">Rooms for {{ hotel.city }}</h2>
+			<table class="w-full border border-gray-300">
+				<thead>
+					<tr>
+						<th class="border border-gray-300 px-2">ID</th>
+						<th class="border border-gray-300 px-2">Room Type</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for room in rooms %}
+					<tr>
+						<td class="border border-gray-300 px-2">{{ room.id }}</td>
+						<td class="border border-gray-300 px-2 uppercase">{{ room.type }}</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+		<a href="{{ url_for('admin_hotels') }}" class="underline text-blue-500 py-2">Hotels List</a>
+	</div>
+	<div class="md:w-1/2 border h-max p-4">
+		<!-- Add a form to create rooms -->
+		<h3 class="text-lg font-semibold mb-2">Add Room</h3>
+		<form action="{{ url_for('add_room', hotel_id=hotel.id) }}" method="post">
+			<div class="mb-4">
+				<label for="type" class="block text-gray-700 font-semibold mb-2">Room Type:</label>
+				<select type="text" id="type" name="type" class="w-full border p-2 focus:outline-blue-500">
+					<option value="">----Room Type------</option>
+					<option value="standard">Standard Room</option>
+					<option value="double">Double Room</option>
+					<option value="family">Family Room</option>
+				</select>
+			</div>
+			<button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">Add Room</button>
+		</form>
+
+	</div>
+</div>
+{% endblock %}

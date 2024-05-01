@@ -1,30 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hotel Name - Homepage</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <header>
-        <div class="logo">Hotel Name</div>
-        <nav>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="login.html">Login</a></li>
-                <li><a href="rooms.html">Rooms</a></li>
-                <li><a href="payment.html">Payment</a></li>
-            </ul>
-        </nav>
-    </header>
-    <section class="special-offers">
-        <!-- Display special offers or services here -->
-    </section>
-    <section class="search-form">
-        <!-- Search form for available rooms -->
-    </section>
-    <!-- Additional content goes here -->
-</body>
-</html>
+{% extends "base.html" %}
 
+{% block title %}Wolrd Hotels | Home{% endblock %}
+
+{% block content %}
+<!-- Search Section -->
+<section class="py-12">
+	<div class="container mx-auto">
+		<h2 class="text-3xl font-semibold mb-6">Find Your Perfect Hotel</h2>
+		<!-- Search Form -->
+		<form action="/search" method="GET" class="mb-8">
+			<div class="flex flex-col md:flex-row gap-4">
+				<!-- Search by City -->
+				<div class="flex-grow">
+					<label for="city" class="block text-gray-700">City</label>
+					<input type="text" id="city" name="city" class="w-full rounded-md p-4 border-gray-300 focus:border-indigo-500 focus:ring focus:ring-indigo-200" placeholder="Enter city">
+				</div>
+				<!-- Search by Dates -->
+				<div class="flex-grow">
+					<label for="dates" class="block text-gray-700">Dates</label>
+					<input type="text" id="dates" name="dates" class="w-full rounded-md p-4 border-gray-300 focus:border-indigo-500 focus:ring focus:ring-indigo-200" placeholder="Select dates">
+				</div>
+				<!-- Filter by Room Type -->
+				<div class="flex-grow">
+					<label for="room_type" class="block text-gray-700">Room Type</label>
+					<select id="room_type" name="room_type" class="w-full rounded-md p-4  border-gray-300 focus:border-indigo-500 focus:ring focus:ring-indigo-200">
+						<option value="">Any Room Type</option>
+						<option value="standard">Standard</option>
+						<option value="double">Double</option>
+						<option value="family">Family</option>
+						<!-- Add more room types as needed -->
+					</select>
+				</div>
+			</div>
+			<button type="submit" class="bg-indigo-500 text-white rounded-md px-4 py-2 mt-4 hover:bg-indigo-600">Search</button>
+		</form>
+	</div>
+</section>
+
+
+<!-- Hotel Listings -->
+<section class="pb-6">
+	<div class="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+		<!-- Loop through hotels and display as cards -->
+		{% for hotel in hotels %}
+		<div class="col-span-1 bg-white rounded shadow p-2">
+			<div class="w-full bg-red-500">
+				<img src={{hotel.city_image_url}} alt={{hotel.name}} class="w-full h-32" style="height: 150px; width: 100%; object-fit: cover;"/>
+			</div>
+			<h3 class="text-xl font-semibold mb-2">{{ hotel.city }}</h3>
+			<p class="text-gray-600">{{ hotel.capacity }} Rooms</p>
+			<!-- Add more hotel details as needed -->
+		</div>
+		{% endfor %}
+	</div>
+</section>
+{% endblock %}

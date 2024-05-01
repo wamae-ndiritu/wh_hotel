@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %} | Admin Dashboard</title>
+    <!-- Include Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 flex">
+    <!-- Sidebar Navigation -->
+    <aside class="bg-gray-800 text-gray-300 w-64 h-screen flex flex-col">
+        <!-- Logo -->
+        <div class="py-4 px-6">
+            <h1 class="text-2xl font-bold text-white">Admin Dashboard</h1>
+        </div>
+        <!-- Navigation Links -->
+        <nav class="flex-1">
+            <ul class="space-y-4">
+                <li><a href="{{ url_for('dashboard') }}" class="block py-2 px-6">Dashboard</a></li>
+                <li><a href="{{ url_for('admin_hotels') }}" class="block py-2 px-6">Hotels</a></li>
+                <li><a href="#" class="block py-2 px-6">Bookings</a></li>
+                <li><a href="#" class="block py-2 px-6">Reports</a></li>
+                <!-- Add more navigation links as needed -->
+            </ul>
+        </nav>
+    </aside>
+    <!-- Main Content Area -->
+    <main class="flex-1 p-8">
+        {% block content %}
+        {% endblock %}
+    </main>
+</body>
+</html>
+
