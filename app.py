@@ -4,6 +4,7 @@ App Views
 from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import func
 from werkzeug.utils import secure_filename
 from datetime import datetime
 import os
@@ -234,13 +235,18 @@ def dashboard():
     """
     Admin Dashboard
     """
-    # Fetch data for dashboard widgets (example data)
-    num_hotels = 10
-    num_room_types = 5
-    total_bookings = 100
-    total_revenue = 5000
+    # Count the number of hotels
+    num_hotels = Hotel.query.count()
 
-    # Render the dashboard.html template and pass the data
+    # Count the number of room types
+    num_room_types = 3
+
+    # Count the total number of bookings
+    total_bookings = Booking.query.count()
+
+    # Calculate the total revenue
+    total_revenue = db.session.query(func.sum(Booking.amount)).scalar()
+
     return render_template('admin_dashboard.html', num_hotels=num_hotels, num_room_types=num_room_types, total_bookings=total_bookings, total_revenue=total_revenue)
 
 
